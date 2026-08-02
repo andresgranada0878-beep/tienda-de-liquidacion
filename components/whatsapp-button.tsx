@@ -40,6 +40,7 @@ export function WhatsAppButton({
 
   return (
     <Button
+      nativeButton={false}
       variant={variant}
       size={size}
       className={cn("h-11 rounded-none px-5 text-sm", className)}

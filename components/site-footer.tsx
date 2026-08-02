@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Instagram, MapPin, MessageCircle } from "lucide-react"
+import { Camera, MapPin, MessageCircle } from "lucide-react"
 
 import { PendingValue } from "@/components/pending-value"
 import { siteConfig } from "@/lib/site-config"
@@ -35,7 +35,7 @@ export function SiteFooter() {
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-sm hover:underline"
           >
-            <Instagram className="size-4" aria-hidden="true" />@{siteConfig.instagram}
+            <Camera className="size-4" aria-hidden="true" />@{siteConfig.instagram}
           </a>
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
             <MapPin className="size-4" aria-hidden="true" />

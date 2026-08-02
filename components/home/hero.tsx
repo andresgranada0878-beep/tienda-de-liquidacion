@@ -34,6 +34,7 @@ export function Hero({ total }: { total: number }) {
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button
+            nativeButton={false}
               size="lg"
               className="h-12 rounded-none px-6 text-sm"
               render={<Link href="/catalogo" />}

@@ -159,6 +159,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
               {soldOut ? "Agotada" : added ? "Agregada" : !size ? "Elige talla" : "Agregar"}
             </Button>
             <Button
+            nativeButton={false}
               variant="outline"
               size="sm"
               className="h-9 rounded-none"

@@ -17,6 +17,7 @@ export function FeaturedProducts({ products }: { products: Product[] }) {
           </h2>
         </div>
         <Button
+        nativeButton={false}
           variant="outline"
           size="lg"
           className="h-11 rounded-none"

@@ -105,6 +105,22 @@ function rowToProduct(row: string[], files: DriveFile[]): Product | null {
 
   let images = imagesForCode(code, files)
   const mainImage = cell(row, COL.mainImage)
+  if (images.length === 0 && mainImage) {
+  const normalizedMainImage = mainImage.trim().toLowerCase()
+
+  const matchingFile = files.find(
+    (file) => file.name.trim().toLowerCase() === normalizedMainImage,
+  )
+
+  if (matchingFile) {
+    images = [
+      {
+        url: `/api/catalog/images/${matchingFile.id}`,
+        alt: `${safeName} fotografía 1`,
+      },
+    ]
+  }
+}
   if (images.length === 0 && /^https?:\/\//.test(mainImage)) {
     images = [{ url: mainImage, alt: `${safeName} fotografía 1` }]
   }

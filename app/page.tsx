@@ -22,7 +22,7 @@ export default async function HomePage() {
   return (
     <>
       <DemoNotice isDemo={catalog.isDemo} />
-      <Hero total={catalog.products.length} />
+      <Hero products={featured.slice(0, 3)} />
       <TrustBar />
       <FeaturedProducts products={featured} />
       <CategoryGrid categories={catalog.categories} />

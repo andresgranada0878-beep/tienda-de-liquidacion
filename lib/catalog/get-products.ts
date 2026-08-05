@@ -6,29 +6,38 @@ import { listImages, type DriveFile } from "@/lib/google/drive"
 import { readSheetRows } from "@/lib/google/sheets"
 import type { Catalog, Product, ProductImage } from "./types"
 
-const PLACEHOLDER = "/placeholder.svg?height=1200&width=900"
-
-/** Columnas A..R del Google Sheets, en orden. */
+/**
+ * Estructura real del Google Sheets:
+ *
+ * A: Referencia
+ * B: Nombre
+ * C: Color
+ * D: Talla
+ * E: Unidades
+ * F: Precio expresado en miles
+ * G: Total
+ */
 const COL = {
   code: 0,
   name: 1,
-  slug: 2,
-  category: 3,
-  description: 4,
-  sizes: 5,
-  color: 6,
-  material: 7,
-  measurements: 8,
-  price: 9,
-  previousPrice: 10,
-  stock: 11,
-  condition: 12,
-  featured: 13,
-  publish: 14,
-  order: 15,
-  date: 16,
-  mainImage: 17,
+  color: 2,
+  sizes: 3,
+  stock: 4,
+  price: 5,
 } as const
+
+type InventoryVariant = {
+  color: string
+  sizes: string[]
+  stock: number
+  price: number
+}
+
+type InventoryGroup = {
+  code: string
+  name: string
+  variants: InventoryVariant[]
+}
 
 function cell(row: string[], index: number) {
   return (row[index] ?? "").toString().trim()
@@ -36,20 +45,33 @@ function cell(row: string[], index: number) {
 
 function parseNumber(value: string): number {
   if (!value) return 0
-  // Acepta "49.900", "49900", "$49.900", "49,900"
-  const cleaned = value.replace(/[^\d,.-]/g, "").replace(/\.(?=\d{3}\b)/g, "").replace(/,/g, ".")
-  const n = Number.parseFloat(cleaned)
-  return Number.isFinite(n) ? Math.round(n) : 0
+
+  const cleaned = value
+    .replace(/[^\d,.-]/g, "")
+    .replace(/,/g, ".")
+
+  const parsed = Number.parseFloat(cleaned)
+
+  return Number.isFinite(parsed) ? parsed : 0
 }
 
-function parseBool(value: string) {
-  const v = value.toLowerCase()
-  return ["si", "sí", "true", "1", "x", "yes"].includes(v)
+/**
+ * En la hoja:
+ * 85 o $85.00 representa $85.000 COP.
+ *
+ * También permite ingresar directamente 85000 en el futuro.
+ */
+function parsePrice(value: string): number {
+  const raw = parseNumber(value)
+
+  if (raw <= 0) return 0
+  if (raw < 1000) return Math.round(raw * 1000)
+
+  return Math.round(raw)
 }
 
-function isNo(value: string) {
-  const v = value.toLowerCase()
-  return ["no", "false", "0", "oculto"].includes(v)
+function parseStock(value: string): number {
+  return Math.max(0, Math.round(parseNumber(value)))
 }
 
 function slugify(value: string) {
@@ -61,74 +83,218 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "")
 }
 
-function splitList(value: string) {
-  return value
-    .split(/[,/|;]/)
-    .map((s) => s.trim())
-    .filter(Boolean)
+function unique(values: string[]) {
+  return [...new Set(values.filter(Boolean))]
 }
 
-/** Relaciona las imágenes de Drive con el producto por su código: REF-101-1.jpg */
-function imagesForCode(code: string, files: DriveFile[]): ProductImage[] {
-  const prefix = code.toLowerCase()
-  const matched = files
-    .filter((f) => {
-      const base = f.name.toLowerCase().replace(/\.[a-z0-9]+$/, "")
-      return base === prefix || base.startsWith(`${prefix}-`) || base.startsWith(`${prefix}_`)
-    })
-    .sort((a, b) => a.name.localeCompare(b.name, "es", { numeric: true }))
+function normalizeSize(value: string) {
+  const normalized = value
+    .trim()
+    .toUpperCase()
+    .replace(/\s*\/\s*/g, "/")
 
-  return matched.map((f, i) => ({
-    url: `/api/catalog/images/${f.id}`,
-    alt: `${code} fotografía ${i + 1}`,
+  if (["U", "UNICA", "ÚNICA"].includes(normalized)) {
+    return "Única"
+  }
+
+  return normalized
+}
+
+function parseSizes(value: string): string[] {
+  if (!value.trim()) return []
+
+  const sizes: string[] = []
+
+  for (const segment of value.split(/[,;|]/)) {
+    const normalized = normalizeSize(segment)
+
+    if (!normalized) continue
+
+    // S-M-L significa tres tallas separadas.
+    if (/^(XS|S|M|L|XL|XXL)(-(XS|S|M|L|XL|XXL))+$/.test(normalized)) {
+      sizes.push(...normalized.split("-"))
+      continue
+    }
+
+    // S/M y M/L se conservan como rangos de talla.
+    sizes.push(normalized)
+  }
+
+  return unique(sizes)
+}
+
+function categoryForName(name: string) {
+  const normalized = name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+
+  if (normalized.includes("body")) return "Bodys"
+  if (normalized.includes("corset")) return "Corsets"
+
+  if (
+    normalized.includes("camisa") ||
+    normalized.includes("blusa") ||
+    normalized.includes("bluson") ||
+    normalized.includes("camibuso") ||
+    normalized.includes("cami buso") ||
+    normalized.includes("buso")
+  ) {
+    return "Blusas y camisas"
+  }
+
+  if (
+    normalized.includes("crop") ||
+    normalized.includes("top") ||
+    normalized.includes("straple") ||
+    normalized.includes("estraple") ||
+    normalized.includes("basica") ||
+    normalized.includes("básica") ||
+    normalized.includes("camiseta")
+  ) {
+    return "Tops y camisetas"
+  }
+
+  return "Otros"
+}
+
+/**
+ * Relaciona las imágenes de Drive con el código.
+ *
+ * Ejemplos válidos:
+ * 1.png
+ * 1-2.png
+ * 1_2.png
+ *
+ * Los nombres descriptivos antiguos se ignoran.
+ */
+function imagesForCode(code: string, files: DriveFile[]): ProductImage[] {
+  const normalizedCode = code.toLowerCase()
+
+  const matched = files
+    .filter((file) => {
+      const base = file.name
+        .toLowerCase()
+        .replace(/\.[a-z0-9]+$/, "")
+        .trim()
+
+      if (!/^\d+(?:[-_].*)?$/.test(base)) return false
+
+      return (
+        base === normalizedCode ||
+        base.startsWith(`${normalizedCode}-`) ||
+        base.startsWith(`${normalizedCode}_`)
+      )
+    })
+    .sort((a, b) =>
+      a.name.localeCompare(b.name, "es", {
+        numeric: true,
+        sensitivity: "base",
+      }),
+    )
+
+  return matched.map((file, index) => ({
+    url: `/api/catalog/images/${file.id}`,
+    alt: `Referencia ${code}, fotografía ${index + 1}`,
   }))
 }
 
-function rowToProduct(row: string[], files: DriveFile[]): Product | null {
-  const code = cell(row, COL.code)
-  const name = cell(row, COL.name)
-  if (!code && !name) return null
-  if (isNo(cell(row, COL.publish))) return null
+function groupInventoryRows(rows: string[][]): InventoryGroup[] {
+  const groups = new Map<string, InventoryGroup>()
 
-  const price = parseNumber(cell(row, COL.price))
-  if (price <= 0) return null
+  for (const row of rows) {
+    const code = cell(row, COL.code)
+    const name = cell(row, COL.name)
+    const stock = parseStock(cell(row, COL.stock))
+    const price = parsePrice(cell(row, COL.price))
 
-  const previousRaw = parseNumber(cell(row, COL.previousPrice))
-  const previousPrice = previousRaw > price ? previousRaw : null
+    if (!/^\d+$/.test(code)) continue
+    if (!name) continue
+    if (stock <= 0) continue
+    if (price <= 0) continue
 
-  const stockRaw = cell(row, COL.stock)
-  const stock = stockRaw === "" ? 0 : Math.max(0, parseNumber(stockRaw))
+    const variant: InventoryVariant = {
+      color: cell(row, COL.color),
+      sizes: parseSizes(cell(row, COL.sizes)),
+      stock,
+      price,
+    }
 
-  const sizes = splitList(cell(row, COL.sizes))
-  const safeName = name || code
-  const slug = slugify(cell(row, COL.slug) || `${code}-${safeName}`)
+    const existing = groups.get(code)
 
-  let images = imagesForCode(code, files)
-  const mainImage = cell(row, COL.mainImage)
-  if (images.length === 0 && /^https?:\/\//.test(mainImage)) {
-    images = [{ url: mainImage, alt: `${safeName} fotografía 1` }]
+    if (existing) {
+      existing.variants.push(variant)
+    } else {
+      groups.set(code, {
+        code,
+        name,
+        variants: [variant],
+      })
+    }
   }
-  if (images.length === 0) {
-    images = [{ url: PLACEHOLDER, alt: `${safeName} sin fotografía disponible` }]
-  }
+
+  return [...groups.values()]
+}
+
+function groupToProduct(
+  group: InventoryGroup,
+  files: DriveFile[],
+): Product | null {
+  const images = imagesForCode(group.code, files)
+
+  // Solo se publican referencias con fotografía numérica.
+  if (images.length === 0) return null
+
+  const colors = unique(
+    group.variants
+      .map((variant) => variant.color.trim())
+      .filter(Boolean),
+  )
+
+  const sizes = unique(
+    group.variants.flatMap((variant) => variant.sizes),
+  )
+
+  const stock = group.variants.reduce(
+    (total, variant) => total + variant.stock,
+    0,
+  )
+
+  const prices = group.variants
+    .map((variant) => variant.price)
+    .filter((price) => price > 0)
+
+  const price = prices.length > 0 ? Math.min(...prices) : 0
+
+  if (stock <= 0 || price <= 0) return null
+
+  const numericCode = Number.parseInt(group.code, 10)
+  const colorText = colors.join(", ")
+  const sizeText = sizes.join(", ")
+
+  const descriptionParts = [
+    colorText ? `Colores disponibles: ${colorText}.` : "",
+    sizeText ? `Tallas disponibles: ${sizeText}.` : "",
+    `Inventario disponible: ${stock} ${stock === 1 ? "unidad" : "unidades"}.`,
+  ].filter(Boolean)
 
   return {
-    code: code || slug.toUpperCase(),
-    name: safeName,
-    slug,
-    category: cell(row, COL.category) || "Otros",
-    description: cell(row, COL.description),
+    code: group.code,
+    name: group.name,
+    slug: slugify(`${group.code}-${group.name}`),
+    category: categoryForName(group.name),
+    description: descriptionParts.join(" "),
     sizes: sizes.length > 0 ? sizes : ["Única"],
-    color: cell(row, COL.color),
-    material: cell(row, COL.material),
-    measurements: cell(row, COL.measurements),
+    color: colorText,
+    material: "",
+    measurements: "",
     price,
-    previousPrice,
+    previousPrice: null,
     stock,
-    condition: cell(row, COL.condition),
-    featured: parseBool(cell(row, COL.featured)),
-    order: parseNumber(cell(row, COL.order)) || 9999,
-    date: cell(row, COL.date),
+    condition: "Nueva",
+    featured: Number.isFinite(numericCode) && numericCode <= 8,
+    order: Number.isFinite(numericCode) ? numericCode : 9999,
+    date: "",
     images,
   }
 }
@@ -137,8 +303,10 @@ function sortProducts(products: Product[]) {
   return [...products].sort((a, b) => {
     const aOut = a.stock <= 0 ? 1 : 0
     const bOut = b.stock <= 0 ? 1 : 0
+
     if (aOut !== bOut) return aOut - bOut
     if (a.order !== b.order) return a.order - b.order
+
     return a.name.localeCompare(b.name, "es")
   })
 }
@@ -149,24 +317,43 @@ function buildCatalog(products: Product[], isDemo: boolean): Catalog {
   const categoryMap = new Map<string, number>()
   const sizeSet = new Set<string>()
   const colorSet = new Set<string>()
+
   let min = Number.POSITIVE_INFINITY
   let max = 0
 
-  for (const p of sorted) {
-    categoryMap.set(p.category, (categoryMap.get(p.category) ?? 0) + 1)
-    p.sizes.forEach((s) => sizeSet.add(s))
-    if (p.color) colorSet.add(p.color)
-    min = Math.min(min, p.price)
-    max = Math.max(max, p.price)
+  for (const product of sorted) {
+    categoryMap.set(
+      product.category,
+      (categoryMap.get(product.category) ?? 0) + 1,
+    )
+
+    product.sizes.forEach((size) => sizeSet.add(size))
+
+    product.color
+      .split(",")
+      .map((color) => color.trim())
+      .filter(Boolean)
+      .forEach((color) => colorSet.add(color))
+
+    min = Math.min(min, product.price)
+    max = Math.max(max, product.price)
   }
 
   return {
     products: sorted,
     categories: [...categoryMap.entries()]
       .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "es")),
-    sizes: [...sizeSet].sort((a, b) => a.localeCompare(b, "es", { numeric: true })),
-    colors: [...colorSet].sort((a, b) => a.localeCompare(b, "es")),
+      .sort(
+        (a, b) =>
+          b.count - a.count ||
+          a.name.localeCompare(b.name, "es"),
+      ),
+    sizes: [...sizeSet].sort((a, b) =>
+      a.localeCompare(b, "es", { numeric: true }),
+    ),
+    colors: [...colorSet].sort((a, b) =>
+      a.localeCompare(b, "es"),
+    ),
     priceRange: {
       min: Number.isFinite(min) ? min : 0,
       max: max || 0,
@@ -177,10 +364,13 @@ function buildCatalog(products: Product[], isDemo: boolean): Catalog {
 
 /**
  * Fuente única del catálogo.
- * Si Google no está configurado o falla, usa los datos de demostración.
+ *
+ * Si Google no está configurado o falla completamente,
+ * se mantienen los productos de demostración como respaldo.
  */
 export async function getProducts(): Promise<Catalog> {
   const env = getGoogleEnv()
+
   if (!env) {
     return buildCatalog(fallbackProducts, true)
   }
@@ -189,40 +379,63 @@ export async function getProducts(): Promise<Catalog> {
     const [rows, files] = await Promise.all([
       readSheetRows(env),
       listImages(env).catch((error) => {
-        console.log("[v0] No se pudieron listar las imágenes de Drive:", (error as Error).message)
+        console.log(
+          "[Glamm Moda] No se pudieron listar las imágenes:",
+          (error as Error).message,
+        )
+
         return [] as DriveFile[]
       }),
     ])
 
-    const products: Product[] = []
-    for (const [index, row] of rows.entries()) {
-      // Una fila incorrecta no debe dañar todo el catálogo.
-      try {
-        const product = rowToProduct(row, files)
-        if (product) products.push(product)
-      } catch (error) {
-        console.log(`[v0] Fila ${index + 2} del catálogo ignorada:`, (error as Error).message)
-      }
-    }
+    const groups = groupInventoryRows(rows)
+
+    const products = groups
+      .map((group) => groupToProduct(group, files))
+      .filter((product): product is Product => product !== null)
 
     if (products.length === 0) {
-      console.log("[v0] El Google Sheets no devolvió productos publicados. Se usan datos demo.")
+      console.log(
+        "[Glamm Moda] No se encontraron productos con inventario y fotografía.",
+      )
+
       return buildCatalog(fallbackProducts, true)
     }
 
+    console.log(
+      `[Glamm Moda] Catálogo cargado: ${products.length} referencias publicadas.`,
+    )
+
     return buildCatalog(products, false)
   } catch (error) {
-    // Se registra el mensaje sin exponer credenciales ni datos sensibles.
-    console.log("[v0] Error leyendo el catálogo de Google:", (error as Error).message)
+    console.log(
+      "[Glamm Moda] Error leyendo el catálogo:",
+      (error as Error).message,
+    )
+
     return buildCatalog(fallbackProducts, true)
   }
 }
 
 export async function getProductBySlug(slug: string) {
   const catalog = await getProducts()
-  const product = catalog.products.find((p) => p.slug === slug) ?? null
+
+  const product =
+    catalog.products.find((item) => item.slug === slug) ?? null
+
   const related = product
-    ? catalog.products.filter((p) => p.slug !== slug && p.category === product.category).slice(0, 4)
+    ? catalog.products
+        .filter(
+          (item) =>
+            item.slug !== slug &&
+            item.category === product.category,
+        )
+        .slice(0, 4)
     : []
-  return { product, related, catalog }
+
+  return {
+    product,
+    related,
+    catalog,
+  }
 }

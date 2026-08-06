@@ -129,7 +129,7 @@ function categoryForName(name: string) {
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
 
-  if (normalized.includes("body")) return "Bodys"
+  if (normalized.includes("body")) return "Body"
   if (normalized.includes("corset")) return "Corsets"
 
   if (

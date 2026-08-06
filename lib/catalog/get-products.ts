@@ -16,6 +16,7 @@ import type { Catalog, Product, ProductImage } from "./types"
  * E: Unidades
  * F: Precio expresado en miles
  * G: Total
+ * H: Categoría
  */
 const COL = {
   code: 0,
@@ -24,6 +25,7 @@ const COL = {
   sizes: 3,
   stock: 4,
   price: 5,
+  category: 7,
 } as const
 
 type InventoryVariant = {
@@ -36,6 +38,7 @@ type InventoryVariant = {
 type InventoryGroup = {
   code: string
   name: string
+  category: string
   variants: InventoryVariant[]
 }
 
@@ -207,6 +210,7 @@ function groupInventoryRows(rows: string[][]): InventoryGroup[] {
     const name = cell(row, COL.name)
     const stock = parseStock(cell(row, COL.stock))
     const price = parsePrice(cell(row, COL.price))
+    const category = cell(row, COL.category)
 
     if (!/^\d+$/.test(code)) continue
     if (!name) continue
@@ -224,10 +228,24 @@ function groupInventoryRows(rows: string[][]): InventoryGroup[] {
 
     if (existing) {
       existing.variants.push(variant)
+
+      if (!existing.category && category) {
+        existing.category = category
+      } else if (
+        category &&
+        existing.category &&
+        category !== existing.category
+      ) {
+        console.warn(
+          `[Glamm Moda] La referencia ${code} tiene categorías distintas: ` +
+            `"${existing.category}" y "${category}". Se conserva la primera.`,
+        )
+      }
     } else {
       groups.set(code, {
         code,
         name,
+        category,
         variants: [variant],
       })
     }
@@ -282,7 +300,7 @@ function groupToProduct(
     code: group.code,
     name: group.name,
     slug: slugify(`${group.code}-${group.name}`),
-    category: categoryForName(group.name),
+    category: group.category || categoryForName(group.name),
     description: descriptionParts.join(" "),
     sizes: sizes.length > 0 ? sizes : ["Única"],
     color: colorText,

@@ -32,7 +32,7 @@ export function getGoogleEnv(): GoogleEnv | null {
     // En Vercel la llave se guarda con \n escapados.
     privateKey: rawKey.replace(/\\n/g, "\n"),
     spreadsheetId,
-    sheetRange: process.env.GOOGLE_SHEET_RANGE || "Catalogo!A2:R",
+    sheetRange: process.env.GOOGLE_SHEET_RANGE || "Catalogo!A2:H",
     imagesFolderId: process.env.GOOGLE_IMAGES_FOLDER_ID || "",
     driveFolderId: process.env.GOOGLE_DRIVE_FOLDER_ID || "",
   }

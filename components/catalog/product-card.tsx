@@ -7,7 +7,7 @@ import { Check, Plus } from "lucide-react"
 
 import { ShareButton } from "@/components/catalog/share-button"
 import { useSelection } from "@/components/selection/selection-provider"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { track } from "@/lib/analytics"
 import { formatCOP } from "@/lib/format"
 import { cn } from "@/lib/utils"
@@ -158,15 +158,15 @@ export function ProductCard({ product, priority = false }: { product: Product; p
               )}
               {soldOut ? "Agotada" : added ? "Agregada" : !size ? "Elige talla" : "Agregar"}
             </Button>
-            <Button
-            nativeButton={false}
-              variant="outline"
-              size="sm"
-              className="h-9 rounded-none"
-              render={<Link href={`/producto/${product.slug}`} />}
+            <Link
+              href={`/producto/${product.slug}`}
+              className={cn(
+                buttonVariants({ variant: "outline", size: "sm" }),
+                "h-9 rounded-none",
+              )}
             >
               Ver detalles
-            </Button>
+            </Link>
           </div>
         </div>
       </div>

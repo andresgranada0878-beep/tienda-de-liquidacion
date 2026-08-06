@@ -2,15 +2,27 @@ import Image from "next/image"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
-import { formatCOP } from "@/lib/format"
-import type { Product } from "@/lib/catalog/types"
+import type { Catalog, Product } from "@/lib/catalog/types"
 
-export function Hero({ products }: { products: Product[] }) {
-  const visibleProducts = products.slice(0, 3)
+type HeroProps = {
+  products: Product[]
+  categories: Catalog["categories"]
+}
+
+export function Hero({ products, categories }: HeroProps) {
+  const visibleCollections = [...categories]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 4)
+    .map((category) => ({
+      ...category,
+      product: products.find(
+        (product) => product.category === category.name,
+      ),
+    }))
 
   return (
     <section className="overflow-hidden border-b bg-background">
-      <div className="mx-auto grid w-full max-w-7xl items-center gap-8 px-4 py-10 md:grid-cols-[0.9-full max-w-7xl items-center gap-8 px-4 py-10 md:grid-cols-[0.9fr_1.1fr] md:px-6 md:py-14">
+      <div className="mx-auto grid w-full max-w-7xl items-center gap-8 px-4 py-10 md:grid-cols-[0.9fr_1.1fr] md:px-6 md:py-14">
         <div className="flex max-w-xl flex-col gap-5">
           <span className="text-eyebrow text-muted-foreground">
             Prendas nuevas · Precios de liquidación · Unidades limitadas
@@ -21,8 +33,9 @@ export function Hero({ products }: { products: Product[] }) {
           </h1>
 
           <p className="max-w-lg text-base leading-relaxed text-muted-foreground text-pretty md:text-lg">
-            Tops, bodys, blusas y más a precios especiales. Elige tus prendas y confirma
-            disponibilidad directamente por WhatsApp.
+            Tops, bodis, blusas y más a precios especiales. Explora
+            nuestras colecciones y confirma la disponibilidad directamente
+            por WhatsApp.
           </p>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -47,43 +60,68 @@ export function Hero({ products }: { products: Product[] }) {
           </div>
         </div>
 
-        {visibleProducts.length > 0 ? (
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:gap-3">
-            {visibleProducts.map((product, index) => (
-              <Link
-                key={product.slug}
-                href={`/producto/${product.slug}`}
-                className={
-                  index === 0
-                    ? "group relative col-span-2 aspect-[16/10] overflow-hidden bg-muted sm:col-span-1 sm:aspect-[4/5]"
-                    : "group relative aspect-[4/5] overflow-hidden bg-muted"
-                }
-              >
-                <Image
-                  src={product.images[0]?.url || "/placeholder.svg"}
-                  alt={product.images[0]?.alt || product.name}
-                  fill
-                  priority
-                  sizes={
-                    index === 0
-                      ? "(max-width: 640px) 100vw, 25vw"
-                      : "(max-width: 640px) 50vw, 25vw"
-                  }
-                  className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                />
+        {visibleCollections.length > 0 ? (
+          <div className="flex flex-col gap-4">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <span className="text-eyebrow text-muted-foreground">
+                  Colecciones
+                </span>
+                <p className="mt-1 font-serif text-2xl tracking-tight">
+                  Explora por categoría
+                </p>
+              </div>
 
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent px-3 pb-3 pt-12 text-white">
-                  <p className="line-clamp-1 text-sm font-medium">{product.name}</p>
-                  <p className="mt-1 text-xs">{formatCOP(product.price)}</p>
-                </div>
+              <Link
+                href="/catalogo"
+                className="text-sm underline underline-offset-4"
+              >
+                Ver todas
               </Link>
-            ))}
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 md:gap-3">
+              {visibleCollections.map((collection, index) => (
+                <Link
+                  key={collection.name}
+                  href={`/catalogo?categoria=${encodeURIComponent(
+                    collection.name,
+                  )}`}
+                  className="group relative aspect-[4/3] overflow-hidden bg-muted"
+                >
+                  <Image
+                    src={
+                      collection.product?.images[0]?.url ||
+                      "/placeholder.svg"
+                    }
+                    alt={
+                      collection.product?.images[0]?.alt ||
+                      `Colección ${collection.name}`
+                    }
+                    fill
+                    priority={index < 2}
+                    sizes="(max-width: 768px) 50vw, 28vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
+
+                  <div className="absolute inset-x-0 bottom-0 px-3 pb-3 pt-10 text-white">
+                    <p className="font-medium">{collection.name}</p>
+                    <p className="mt-1 text-xs text-white/80">
+                      {collection.count}{" "}
+                      {collection.count === 1 ? "prenda" : "prendas"}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="relative aspect-[16/10] overflow-hidden bg-muted">
             <Image
               src="/images/hero-boutique.png"
-              alt="Prendas disponibles en Glamm Moda"
+              alt="Colecciones disponibles en Glamm Moda"
               fill
               priority
               sizes="(max-width: 768px) 100vw, 55vw"

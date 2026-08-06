@@ -1,4 +1,3 @@
-import { CategoryGrid } from "@/components/home/category-grid"
 import { DeliveryInfo } from "@/components/home/delivery-info"
 import { Faq } from "@/components/home/faq"
 import { FeaturedProducts } from "@/components/home/featured-products"
@@ -13,21 +12,30 @@ export const revalidate = 300
 export default async function HomePage() {
   const catalog = await getProducts()
 
-  const available = catalog.products.filter((p) => p.stock > 0)
+  const available = catalog.products.filter((product) => product.stock > 0)
+
   const featured = [
-    ...available.filter((p) => p.featured),
-    ...available.filter((p) => !p.featured),
+    ...available.filter((product) => product.featured),
+    ...available.filter((product) => !product.featured),
   ].slice(0, 8)
 
   return (
     <>
       <DemoNotice isDemo={catalog.isDemo} />
-      <Hero products={featured.slice(0, 3)} />
-      <TrustBar />
+
+      <Hero
+        products={available}
+        categories={catalog.categories}
+      />
+
       <FeaturedProducts products={featured} />
-      <CategoryGrid categories={catalog.categories} />
+
+      <TrustBar />
+
       <HowToBuy />
+
       <DeliveryInfo />
+
       <Faq />
     </>
   )

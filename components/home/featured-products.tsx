@@ -8,7 +8,7 @@ export function FeaturedProducts({ products }: { products: Product[] }) {
   if (products.length === 0) return null
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 pb-6 pt-10 md:px-6 md:pt-14">
+    <section className="mx-auto w-full max-w-7xl px-4 pb-10 pt-10 md:px-6 md:py-14">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex max-w-2xl flex-col gap-2">
           <span className="text-eyebrow text-muted-foreground">
@@ -16,11 +16,12 @@ export function FeaturedProducts({ products }: { products: Product[] }) {
           </span>
 
           <h2 className="font-serif text-3xl tracking-tight text-balance md:text-4xl">
-            Prendas listas para comprar
+            Prendas destacadas
           </h2>
 
           <p className="text-sm leading-relaxed text-muted-foreground">
-            Precios, tallas, colores y unidades actualizados según el inventario disponible.
+            Explora una selección de prendas con tallas, colores y unidades
+            disponibles.
           </p>
         </div>
 

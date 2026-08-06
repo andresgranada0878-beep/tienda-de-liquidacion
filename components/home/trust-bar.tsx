@@ -20,7 +20,7 @@ export function TrustBar() {
       title: "Envíos",
       body: isPendiente(siteConfig.shippingCoverage)
         ? "Cobertura de envíos pendiente por completar."
-        : `Enviamos a ${siteConfig.shippingCoverage}.`,
+        : `${siteConfig.shippingCoverage}.`,
     },
     {
       icon: CreditCard,

@@ -44,7 +44,7 @@ export function ProductDetail({ product }: { product: Product }) {
       : "Talla: por confirmar",
     `Precio: ${formatCOP(product.price)}`,
     "",
-    "¿Me confirmas disponibilidad?",
+    "¿Me confirmas la disponibilidad?",
   ]
     .filter(Boolean)
     .join("\n")
@@ -132,7 +132,7 @@ export function ProductDetail({ product }: { product: Product }) {
             </p>
 
             <p className="mt-1 text-xs text-muted-foreground">
-              Confirmamos disponibilidad antes del pago.
+              Confirmamos la disponibilidad antes del pago.
             </p>
           </div>
 

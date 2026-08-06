@@ -155,7 +155,7 @@ export function SelectionSheet() {
                 <span className="font-serif text-2xl tabular-nums">{formatCOP(total)}</span>
               </div>
               <p className="text-xs text-muted-foreground text-pretty">
-                El total es estimado. Confirmamos disponibilidad, envío y forma de pago por
+                El valor total es estimado. Confirmamos la disponibilidad, el envío y la forma de pago por
                 WhatsApp antes de cualquier pago.
               </p>
               <Button
@@ -176,7 +176,7 @@ export function SelectionSheet() {
                 Vaciar la selección
               </Button>
               <p className="text-xs text-muted-foreground">
-                Atención por WhatsApp de {siteConfig.name}.
+                Atención de {siteConfig.name} por WhatsApp.
               </p>
             </div>
           </>

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     template: `%s · ${siteConfig.name}`,
   },
   description:
-    "Liquidación del inventario restante. Explora el catálogo, arma tu pedido y confírmalo por WhatsApp. Prendas limitadas a precios especiales.",
+    "Liquidación del inventario restante. Explora el catálogo, arma tu pedido y confírmalo por WhatsApp. Unidades limitadas a precios especiales.",
   applicationName: siteConfig.name,
   generator: "v0.app",
   openGraph: {

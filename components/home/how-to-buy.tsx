@@ -8,7 +8,7 @@ const steps = [
     body: "Generamos automáticamente el mensaje con códigos, tallas, cantidades y total estimado.",
   },
   {
-    title: "Confirma disponibilidad, pago y entrega",
+    title: "Confirma la disponibilidad, el pago y la entrega",
     body: "Verificamos que las prendas sigan disponibles y acordamos la forma de pago y de entrega.",
   },
 ]

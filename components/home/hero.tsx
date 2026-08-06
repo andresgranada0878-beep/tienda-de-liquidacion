@@ -36,12 +36,12 @@ export function Hero({ products }: { products: Product[] }) {
             </Button>
 
             <span className="text-xs leading-relaxed text-muted-foreground">
-              Confirmamos disponibilidad y total antes del pago.
+              Confirmamos la disponibilidad y el valor total antes del pago.
             </span>
           </div>
 
           <div className="flex flex-wrap gap-x-5 gap-y-2 border-t pt-4 text-xs text-muted-foreground">
-            <span>Envíos nacionales</span>
+            <span>Envíos a toda Colombia</span>
             <span>Recogida en Sabaneta</span>
             <span>Compra por WhatsApp</span>
           </div>

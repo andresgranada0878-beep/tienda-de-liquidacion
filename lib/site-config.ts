@@ -14,27 +14,27 @@ tagline: "Últimas prendas, precios que enamoran",
 whatsapp: "573011691705",
 instagram: PENDIENTE,
 city: "Sabaneta, Antioquia",
-shippingCoverage: "Envíos a todo Colombia",
-shippingCost: "El costo del envío lo asume el comprador",
+shippingCoverage: "Envíos a toda Colombia",
+shippingCost: "El comprador asume el costo del envío",
   /** Tiempo estimado de entrega. */
   shippingTime:
     "El tiempo de entrega depende de la ciudad de destino y de los tiempos establecidos por la transportadora seleccionada.",
 
   /** Recogida presencial: sí, no o condiciones. */
   pickup:
-    "Recogida disponible en Sabaneta con cita previa. También puede acordarse un punto de entrega en el Área Metropolitana, sujeto a disponibilidad.",
+    "Recogida disponible en Sabaneta con cita previa. También podemos acordar un punto de entrega en el área metropolitana, sujeto a disponibilidad.",
 
   /** Formas de pago. */
   paymentMethods:
-    "Transferencia mediante llave, cuenta Bancolombia o Nequi. Los datos de pago se confirman únicamente por WhatsApp después de validar la disponibilidad del pedido.",
+    "Transferencia mediante una llave, una cuenta Bancolombia o Nequi. Los datos de pago se confirman únicamente por WhatsApp después de validar la disponibilidad del pedido.",
 
   /** Política de cambios. */
   exchangePolicy:
-    "Por tratarse de prendas en liquidación, no realizamos cambios comerciales por talla, color o gusto. Atendemos novedades por defectos de fabricación. Los bodys no tienen cambio comercial por razones de higiene, salvo que presenten un defecto de fabricación. La prenda debe conservarse sin uso, sin lavar y sin modificaciones. Esta política no limita los derechos legales del consumidor cuando resulten aplicables.",
+    "Por tratarse de prendas en liquidación, no realizamos cambios por talla, color o preferencia. Atendemos reclamaciones por defectos de fabricación. Las prendas tipo body no tienen cambio por razones de higiene, salvo que presenten un defecto de fabricación. La prenda debe conservarse sin uso, sin lavar y sin modificaciones. Esta política no limita los derechos legales del consumidor cuando resulten aplicables.",
 
   /** Condiciones de la liquidación. */
   clearanceTerms:
-    "Los precios especiales aplican hasta agotar existencias. El inventario es limitado y la disponibilidad se confirma por WhatsApp antes de realizar el pago. Una prenda no se considera reservada hasta que el pedido y el pago hayan sido confirmados.",
+    "Los precios especiales estarán vigentes hasta agotar existencias. El inventario es limitado y la disponibilidad se confirma por WhatsApp antes de realizar el pago. Una prenda no se considera reservada hasta que el pedido y el pago hayan sido confirmados.",
 
   /** Estado general de las prendas. */
   itemsCondition:
@@ -42,11 +42,11 @@ shippingCost: "El costo del envío lo asume el comprador",
 
   /** Cómo confirmamos el pedido. */
   orderConfirmation:
-    "Todo pedido se confirma por WhatsApp antes de realizar cualquier pago. Validamos disponibilidad, referencias, tallas, total, medio de pago y forma de entrega.",
+    "Todo pedido se confirma por WhatsApp antes de realizar cualquier pago. Validamos la disponibilidad, las referencias, las tallas, el valor total, el medio de pago y la forma de entrega.",
 
   /** Cómo elegir la talla. */
   sizeGuide:
-    "Revisa la talla y las medidas disponibles en la ficha de cada prenda. Si tienes dudas, escríbenos por WhatsApp antes de confirmar el pedido.",
+    "Revisa la talla y las medidas indicadas en la ficha de cada prenda. Si tienes dudas, escríbenos por WhatsApp antes de confirmar el pedido.",
 
   /** Horario de atención. */
   businessHours:

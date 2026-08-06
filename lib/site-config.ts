@@ -55,7 +55,7 @@ shippingCost: "El comprador asume el costo del envío",
   /** URL pública del sitio. */
   url:
     process.env.NEXT_PUBLIC_SITE_URL ??
-    "https://tienda-de-liquidacion.vercel.app",
+    "https://glamm-moda.vercel.app",
 
   currency: "COP",
 } as const

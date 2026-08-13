@@ -14,19 +14,19 @@ tagline: "Últimas prendas, precios que enamoran",
 whatsapp: "573011691705",
 instagram: PENDIENTE,
 city: "Sabaneta, Antioquia",
-shippingCoverage: "Envíos a toda Colombia",
-shippingCost: "El comprador asume el costo del envío",
+shippingCoverage: "Envíos disponibles en toda Colombia",
+shippingCost: "El costo del domicilio o de la transportadora lo asume el comprador. Las entregas coordinadas en estaciones del Metro del Área Metropolitana no tienen costo.",
   /** Tiempo estimado de entrega. */
   shippingTime:
     "El tiempo de entrega depende de la ciudad de destino y de los tiempos establecidos por la transportadora seleccionada.",
 
   /** Recogida presencial: sí, no o condiciones. */
   pickup:
-    "Recogida disponible en Sabaneta con cita previa. También podemos acordar un punto de entrega en el área metropolitana, sujeto a disponibilidad.",
+    "En Sabaneta puedes recoger tu pedido. En el Área Metropolitana también podemos coordinar entregas sin costo en estaciones del Metro o acordar un encuentro en un lugar público. Si prefieres domicilio, el costo lo asume el comprador.",
 
   /** Formas de pago. */
   paymentMethods:
-    "Transferencia mediante una llave, una cuenta Bancolombia o Nequi. Los datos de pago se confirman únicamente por WhatsApp después de validar la disponibilidad del pedido.",
+    "Pago por transferencia mediante llave Bre-B, Nequi o Bancolombia. Los datos para realizar el pago se confirman únicamente por WhatsApp después de validar la disponibilidad del pedido.",
 
   /** Política de cambios. */
   exchangePolicy:

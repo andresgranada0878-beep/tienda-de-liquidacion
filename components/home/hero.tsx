@@ -33,7 +33,7 @@ export function Hero({ products, categories }: HeroProps) {
           </h1>
 
           <p className="max-w-lg text-base leading-relaxed text-muted-foreground text-pretty md:text-lg">
-            Tops, bodis, blusas y más a precios especiales. Explora
+            Tops, bodys, blusas y más a precios especiales. Explora
             nuestras colecciones y confirma la disponibilidad directamente
             por WhatsApp.
           </p>

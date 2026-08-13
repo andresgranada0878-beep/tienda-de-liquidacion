@@ -8,6 +8,7 @@ export type SelectionItem = {
   code: string
   slug: string
   name: string
+  color: string
   size: string
   quantity: number
   price: number
@@ -21,8 +22,8 @@ type SelectionContextValue = {
   total: number
   ready: boolean
   add: (item: Omit<SelectionItem, "quantity">, quantity?: number) => void
-  remove: (code: string, size: string) => void
-  setQuantity: (code: string, size: string, quantity: number) => void
+  remove: (slug: string, size: string) => void
+  setQuantity: (slug: string, size: string, quantity: number) => void
   clear: () => void
   isOpen: boolean
   setOpen: (open: boolean) => void
@@ -32,8 +33,8 @@ const STORAGE_KEY = "tienda:seleccion"
 
 const SelectionContext = createContext<SelectionContextValue | null>(null)
 
-function keyOf(code: string, size: string) {
-  return `${code}__${size}`
+function keyOf(slug: string, size: string) {
+  return `${slug}__${size}`
 }
 
 export function SelectionProvider({ children }: { children: React.ReactNode }) {
@@ -66,7 +67,7 @@ export function SelectionProvider({ children }: { children: React.ReactNode }) {
 
   const add = useCallback((item: Omit<SelectionItem, "quantity">, quantity = 1) => {
     setItems((current) => {
-      const index = current.findIndex((i) => keyOf(i.code, i.size) === keyOf(item.code, item.size))
+      const index = current.findIndex((i) => keyOf(i.slug, i.size) === keyOf(item.slug, item.size))
       if (index >= 0) {
         const next = [...current]
         const merged = Math.min(next[index].quantity + quantity, Math.max(1, item.stock))
@@ -78,15 +79,17 @@ export function SelectionProvider({ children }: { children: React.ReactNode }) {
     track("AddItem", { code: item.code, size: item.size, price: item.price })
   }, [])
 
-  const remove = useCallback((code: string, size: string) => {
-    setItems((current) => current.filter((i) => keyOf(i.code, i.size) !== keyOf(code, size)))
-    track("RemoveItem", { code, size })
+  const remove = useCallback((slug: string, size: string) => {
+    setItems((current) =>
+      current.filter((i) => keyOf(i.slug, i.size) !== keyOf(slug, size)),
+    )
+    track("RemoveItem", { slug, size })
   }, [])
 
-  const setQuantity = useCallback((code: string, size: string, quantity: number) => {
+  const setQuantity = useCallback((slug: string, size: string, quantity: number) => {
     setItems((current) =>
       current.map((i) =>
-        keyOf(i.code, i.size) === keyOf(code, size)
+        keyOf(i.slug, i.size) === keyOf(slug, size)
           ? { ...i, quantity: Math.max(1, Math.min(quantity, Math.max(1, i.stock))) }
           : i,
       ),

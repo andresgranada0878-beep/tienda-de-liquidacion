@@ -40,6 +40,7 @@ type InventoryGroup = {
   name: string
   category: string
   variants: InventoryVariant[]
+  rowNumber: number
 }
 
 function cell(row: string[], index: number) {
@@ -203,19 +204,19 @@ function imagesForCode(code: string, files: DriveFile[]): ProductImage[] {
 }
 
 function groupInventoryRows(rows: string[][]): InventoryGroup[] {
-  const groups = new Map<string, InventoryGroup>()
+  const groups: InventoryGroup[] = []
 
-  for (const row of rows) {
+  rows.forEach((row, index) => {
     const code = cell(row, COL.code)
     const name = cell(row, COL.name)
     const stock = parseStock(cell(row, COL.stock))
     const price = parsePrice(cell(row, COL.price))
     const category = cell(row, COL.category)
 
-    if (!/^\d+$/.test(code)) continue
-    if (!name) continue
-    if (stock <= 0) continue
-    if (price <= 0) continue
+    if (!/^\d+$/.test(code)) return
+    if (!name) return
+    if (stock <= 0) return
+    if (price <= 0) return
 
     const variant: InventoryVariant = {
       color: cell(row, COL.color),
@@ -224,34 +225,16 @@ function groupInventoryRows(rows: string[][]): InventoryGroup[] {
       price,
     }
 
-    const existing = groups.get(code)
+    groups.push({
+      code,
+      name,
+      category,
+      variants: [variant],
+      rowNumber: index + 2,
+    })
+  })
 
-    if (existing) {
-      existing.variants.push(variant)
-
-      if (!existing.category && category) {
-        existing.category = category
-      } else if (
-        category &&
-        existing.category &&
-        category !== existing.category
-      ) {
-        console.warn(
-          `[Glamm Moda] La referencia ${code} tiene categorías distintas: ` +
-            `"${existing.category}" y "${category}". Se conserva la primera.`,
-        )
-      }
-    } else {
-      groups.set(code, {
-        code,
-        name,
-        category,
-        variants: [variant],
-      })
-    }
-  }
-
-  return [...groups.values()]
+  return groups
 }
 
 function groupToProduct(
@@ -299,7 +282,9 @@ function groupToProduct(
   return {
     code: group.code,
     name: group.name,
-    slug: slugify(`${group.code}-${group.name}`),
+    slug: slugify(
+      `${group.code}-${group.name}-${group.variants[0]?.color || "sin-color"}-fila-${group.rowNumber}`,
+    ),
     category: group.category || categoryForName(group.name),
     description: descriptionParts.join(" "),
     sizes: sizes.length > 0 ? sizes : ["Única"],

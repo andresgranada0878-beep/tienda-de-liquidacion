@@ -12,7 +12,8 @@ export function buildOrderMessage(items: SelectionItem[]) {
 
   items.forEach((item, index) => {
     const subtotal = item.price * item.quantity
-    lines.push(`${index + 1}. ${item.code} ${item.name}`)
+    lines.push(`${index + 1}. Ref. ${item.code} - ${item.name}`)
+    if (item.color) lines.push(`Color: ${item.color}`)
     lines.push(`Talla: ${item.size}`)
     lines.push(`Cantidad: ${item.quantity}`)
     lines.push(`Precio: ${formatCOP(item.price)}`)
@@ -39,6 +40,7 @@ export function buildSingleProductMessage(input: {
   name: string
   slug: string
   size?: string
+  color?: string
   price: number
 }) {
   const lines = [
@@ -46,6 +48,7 @@ export function buildSingleProductMessage(input: {
     "",
     `${input.code} ${input.name}`,
   ]
+  if (input.color) lines.push(`Color: ${input.color}`)
   if (input.size) lines.push(`Talla: ${input.size}`)
   lines.push(`Precio: ${formatCOP(input.price)}`)
   lines.push(productUrl(input.slug))

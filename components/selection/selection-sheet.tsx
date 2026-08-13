@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -49,16 +48,13 @@ export function SelectionSheet() {
               Agrega las prendas que te interesen y envíanos tu selección por WhatsApp para
               confirmar disponibilidad.
             </p>
-            <SheetClose
-              render={
-                <Link
-                  href="/catalogo"
-                  className="text-sm font-medium underline underline-offset-4"
-                />
-              }
+            <Link
+              href="/catalogo"
+              onClick={() => setOpen(false)}
+              className="text-sm font-medium underline underline-offset-4"
             >
               Ver catálogo
-            </SheetClose>
+            </Link>
           </div>
         ) : (
           <>
@@ -66,7 +62,7 @@ export function SelectionSheet() {
               <ul className="flex flex-col">
                 {items.map((item) => (
                   <li
-                    key={`${item.code}-${item.size}`}
+                    key={`${item.slug}-${item.size}`}
                     className="flex gap-3 border-b border-border/60 px-5 py-4"
                   >
                     <div className="relative size-20 shrink-0 overflow-hidden bg-muted">
@@ -84,14 +80,17 @@ export function SelectionSheet() {
                         <div className="min-w-0">
                           <p className="truncate text-sm font-medium leading-tight">{item.name}</p>
                           <p className="text-xs text-muted-foreground">
-                            {item.code} · Talla {item.size}
+                            Ref. {item.code}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {item.color ? item.color + " · " : ""}Talla {item.size}
                           </p>
                         </div>
                         <Button
                           variant="ghost"
                           size="icon-sm"
                           aria-label={`Quitar ${item.name} talla ${item.size}`}
-                          onClick={() => remove(item.code, item.size)}
+                          onClick={() => remove(item.slug, item.size)}
                         >
                           <X aria-hidden="true" />
                         </Button>
@@ -107,7 +106,7 @@ export function SelectionSheet() {
                               aria-label="Disminuir cantidad"
                               disabled={item.quantity <= 1}
                               onClick={() =>
-                                setQuantity(item.code, item.size, item.quantity - 1)
+                                setQuantity(item.slug, item.size, item.quantity - 1)
                               }
                             >
                               <Minus aria-hidden="true" />
@@ -122,7 +121,7 @@ export function SelectionSheet() {
                               aria-label="Aumentar cantidad"
                               disabled={item.quantity >= item.stock}
                               onClick={() =>
-                                setQuantity(item.code, item.size, item.quantity + 1)
+                                setQuantity(item.slug, item.size, item.quantity + 1)
                               }
                             >
                               <Plus aria-hidden="true" />
@@ -163,7 +162,7 @@ export function SelectionSheet() {
                 className="h-12 rounded-none text-sm"
                 onClick={handleSend}
               >
-                Enviar pedido por WhatsApp
+                Enviar selección por WhatsApp
               </Button>
               <Separator />
               <Button

@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -68,17 +67,14 @@ export function SiteHeader() {
 
             <nav className="flex flex-col px-2 py-2" aria-label="Menú principal">
               {visibleLinks.map((link) => (
-                <SheetClose
+                <Link
                   key={link.href}
-                  render={
-                    <Link
-                      href={link.href}
-                      className="rounded-none px-3 py-3 text-sm hover:bg-muted"
-                    />
-                  }
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-none px-3 py-3 text-sm hover:bg-muted"
                 >
                   {link.label}
-                </SheetClose>
+                </Link>
               ))}
             </nav>
 
@@ -130,18 +126,14 @@ export function SiteHeader() {
 
           <Button
             variant="outline"
-            size="icon"
-            className="relative rounded-none"
+            className="relative h-9 rounded-none px-3"
             aria-label={`Mi selección, ${count} ${count === 1 ? "prenda" : "prendas"}`}
             onClick={() => setOpen(true)}
           >
             <ShoppingBag aria-hidden="true" />
-
-            {count > 0 ? (
-              <span className="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-primary text-[0.65rem] font-medium text-primary-foreground tabular-nums">
-                {count}
-              </span>
-            ) : null}
+            <span className="hidden sm:inline">Mi selección</span>
+            <span className="sm:hidden">Selección</span>
+            <span className="text-xs tabular-nums">({count})</span>
           </Button>
         </div>
       </div>

@@ -3,13 +3,16 @@
 import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Plus } from "lucide-react"
 
+import { useSelection } from "@/components/selection/selection-provider"
+import { Button } from "@/components/ui/button"
 import { WhatsAppButton } from "@/components/whatsapp-button"
 import { formatCOP } from "@/lib/format"
 import type { Product } from "@/lib/catalog/types"
 
 export function ProductDetail({ product }: { product: Product }) {
+  const { add, setOpen } = useSelection()
   const colors = product.color
     .split(",")
     .map((color) => color.trim())
@@ -28,6 +31,23 @@ export function ProductDetail({ product }: { product: Product }) {
   const selectionComplete =
     selectedSize !== "" &&
     (colors.length === 0 || selectedColor !== "")
+
+  function handleAdd() {
+    if (!selectionComplete) return
+
+    add({
+      code: product.code,
+      slug: product.slug,
+      name: product.name,
+      color: selectedColor || product.color,
+      size: selectedSize,
+      price: product.price,
+      stock: product.stock,
+      image: product.images[0]?.url || "/placeholder.svg",
+    })
+
+    setOpen(true)
+  }
 
   const message = [
     "Hola, estoy interesada en esta prenda de Glamm Moda:",
@@ -186,13 +206,25 @@ export function ProductDetail({ product }: { product: Product }) {
 
           <div className="mt-8">
             {selectionComplete ? (
-              <WhatsAppButton
-                message={message}
-                source="detalle-producto"
-                className="h-12 w-full"
-              >
-                Consultar esta prenda por WhatsApp
-              </WhatsAppButton>
+              <div className="flex flex-col gap-2">
+                <Button
+                  size="lg"
+                  className="h-12 w-full rounded-none"
+                  onClick={handleAdd}
+                >
+                  <Plus data-icon="inline-start" aria-hidden="true" />
+                  Agregar a mi selección
+                </Button>
+
+                <WhatsAppButton
+                  message={message}
+                  source="detalle-producto"
+                  variant="outline"
+                  className="h-12 w-full rounded-none"
+                >
+                  Consultar esta prenda por WhatsApp
+                </WhatsAppButton>
+              </div>
             ) : (
               <button
                 type="button"

@@ -27,6 +27,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
       code: product.code,
       slug: product.slug,
       name: product.name,
+      color: product.color,
       size,
       price: product.price,
       stock: product.stock,
@@ -156,7 +157,13 @@ export function ProductCard({ product, priority = false }: { product: Product; p
               ) : (
                 <Plus data-icon="inline-start" aria-hidden="true" />
               )}
-              {soldOut ? "Agotada" : added ? "Agregada" : !size ? "Elige talla" : "Agregar"}
+              {soldOut
+                ? "Agotada"
+                : added
+                  ? "Agregada"
+                  : !size
+                    ? "Elige talla"
+                    : "Agregar a mi selección"}
             </Button>
             <Link
               href={`/producto/${product.slug}`}

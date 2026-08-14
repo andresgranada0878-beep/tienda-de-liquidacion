@@ -7,10 +7,6 @@ export const maxDuration = 300
 
 const MAX_IMAGES_PER_RUN = 4
 
-function cell(row: string[], index: number) {
-  return (row[index] ?? "").toString().trim()
-}
-
 export async function GET(request: Request) {
   const cronSecret = process.env.CRON_SECRET?.trim()
 
@@ -49,8 +45,8 @@ export async function GET(request: Request) {
     const latestNameByFileId = new Map<string, string>()
 
     for (const row of controlRows) {
-      const fileId = cell(row, 0)
-      const fileName = cell(row, 1)
+      const fileId = row.fileId.trim()
+      const fileName = row.fileName.trim()
 
       if (fileId) {
         latestNameByFileId.set(fileId, fileName)

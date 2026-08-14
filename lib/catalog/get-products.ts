@@ -26,6 +26,7 @@ const COL = {
   stock: 4,
   price: 5,
   category: 7,
+  photoIds: 8,
 } as const
 
 type InventoryVariant = {
@@ -41,6 +42,7 @@ type InventoryGroup = {
   category: string
   variants: InventoryVariant[]
   rowNumber: number
+  photoIds: string
 }
 
 function cell(row: string[], index: number) {
@@ -172,35 +174,36 @@ function categoryForName(name: string) {
  *
  * Los nombres descriptivos antiguos se ignoran.
  */
-function imagesForCode(code: string, files: DriveFile[]): ProductImage[] {
-  const normalizedCode = code.toLowerCase()
+function imagesForIds(
+  photoIds: string,
+  code: string,
+  files: DriveFile[],
+): ProductImage[] {
+  const ids = unique(
+    photoIds
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean),
+  )
 
-  const matched = files
-    .filter((file) => {
-      const base = file.name
-        .toLowerCase()
-        .replace(/\.[a-z0-9]+$/, "")
-        .trim()
+  if (ids.length === 0) return []
 
-      if (!/^\d+(?:[-_].*)?$/.test(base)) return false
+  const fileById = new Map(
+    files.map((file) => [file.id, file]),
+  )
 
-      return (
-        base === normalizedCode ||
-        base.startsWith(`${normalizedCode}-`) ||
-        base.startsWith(`${normalizedCode}_`)
-      )
-    })
-    .sort((a, b) =>
-      a.name.localeCompare(b.name, "es", {
-        numeric: true,
-        sensitivity: "base",
-      }),
-    )
+  return ids.flatMap((id, index) => {
+    const file = fileById.get(id)
 
-  return matched.map((file, index) => ({
-    url: `/api/catalog/images/${file.id}`,
-    alt: `Referencia ${code}, fotografía ${index + 1}`,
-  }))
+    if (!file) return []
+
+    return [
+      {
+        url: `/api/catalog/images/${file.id}`,
+        alt: `Referencia ${code}, fotografia ${index + 1}`,
+      },
+    ]
+  })
 }
 
 function groupInventoryRows(rows: string[][]): InventoryGroup[] {
@@ -231,6 +234,7 @@ function groupInventoryRows(rows: string[][]): InventoryGroup[] {
       category,
       variants: [variant],
       rowNumber: index + 2,
+      photoIds: cell(row, COL.photoIds),
     })
   })
 
@@ -241,7 +245,7 @@ function groupToProduct(
   group: InventoryGroup,
   files: DriveFile[],
 ): Product | null {
-  const images = imagesForCode(group.code, files)
+  const images = imagesForIds(group.photoIds, group.code, files)
 
   // Solo se publican referencias con fotografía numérica.
   if (images.length === 0) return null

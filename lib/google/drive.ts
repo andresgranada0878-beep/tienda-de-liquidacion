@@ -12,7 +12,10 @@ export type DriveFile = {
  * Lista las imágenes de la subcarpeta autorizada. SOLO LECTURA.
  * No existe ninguna función para crear, mover, editar o eliminar archivos.
  */
-export async function listImages(env: GoogleEnv): Promise<DriveFile[]> {
+export async function listImages(
+  env: GoogleEnv,
+  options?: { fresh?: boolean },
+): Promise<DriveFile[]> {
   const folderId = env.imagesFolderId
   if (!folderId) return []
 
@@ -31,10 +34,24 @@ export async function listImages(env: GoogleEnv): Promise<DriveFile[]> {
     })
     if (pageToken) params.set("pageToken", pageToken)
 
-    const res = await fetch(`https://www.googleapis.com/drive/v3/files?${params.toString()}`, {
-      headers: { Authorization: `Bearer ${token}` },
-      next: { revalidate: 300, tags: ["catalogo"] },
-    })
+    const res = await fetch(
+      `https://www.googleapis.com/drive/v3/files?${params.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        ...(options?.fresh
+          ? {
+              cache: "no-store" as const,
+            }
+          : {
+              next: {
+                revalidate: 300,
+                tags: ["catalogo"],
+              },
+            }),
+      },
+    )
 
     if (!res.ok) throw new Error(`Drive API respondió ${res.status}`)
 

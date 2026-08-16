@@ -89,8 +89,9 @@ export async function downloadFile(env: GoogleEnv, fileId: string) {
   const token = await getAccessToken(env)
   const res = await fetch(
     `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?alt=media&supportsAllDrives=true`,
-    { headers: { Authorization: `Bearer ${token}` }, next: { revalidate: 86400 } },
+    { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" },
   )
   if (!res.ok || !res.body) return null
   return res
 }
+

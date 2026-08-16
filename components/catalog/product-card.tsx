@@ -46,13 +46,13 @@ export function ProductCard({ product, priority = false }: { product: Product; p
       )}
     >
       <div className="relative aspect-[3/4] overflow-hidden bg-muted">
-        <Link href={`/producto/${product.slug}`} aria-label={`Ver detalles de ${product.name}`}>
+        <Link prefetch={false} href={`/producto/${product.slug}`} aria-label={`Ver detalles de ${product.name}`}>
           <Image
             src={product.images[0]?.url || "/placeholder.svg"}
             alt={product.images[0]?.alt || product.name}
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-            priority={priority}
+            preload={priority}
             loading={priority ? undefined : "lazy"}
             className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
@@ -94,7 +94,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
         </div>
 
         <h3 className="font-serif text-base leading-snug text-pretty">
-          <Link href={`/producto/${product.slug}`} className="hover:underline">
+          <Link prefetch={false} href={`/producto/${product.slug}`} className="hover:underline">
             {product.name}
           </Link>
         </h3>
@@ -165,7 +165,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
                     ? "Elige talla"
                     : "Agregar a mi selección"}
             </Button>
-            <Link
+            <Link prefetch={false}
               href={`/producto/${product.slug}`}
               className={cn(
                 buttonVariants({ variant: "outline", size: "sm" }),
@@ -180,3 +180,6 @@ export function ProductCard({ product, priority = false }: { product: Product; p
     </article>
   )
 }
+
+
+

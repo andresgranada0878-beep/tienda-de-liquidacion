@@ -1,6 +1,5 @@
 import { getGoogleEnv } from "@/lib/google/auth"
 import { downloadFile, isFileInAuthorizedFolder } from "@/lib/google/drive"
-
 /**
  * Sirve las imágenes privadas de Google Drive desde el servidor.
  * Solo lectura. Solo archivos que pertenecen a la carpeta autorizada.
@@ -41,3 +40,5 @@ export async function GET(_request: Request, { params }: { params: Promise<{ fil
     return new Response("Error al obtener la imagen", { status: 502 })
   }
 }
+
+

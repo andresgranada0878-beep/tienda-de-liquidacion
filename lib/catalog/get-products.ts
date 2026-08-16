@@ -1,5 +1,6 @@
 import "server-only"
 
+import { unstable_cache } from "next/cache"
 import { fallbackProducts } from "@/data/products-fallback"
 import { getGoogleEnv } from "@/lib/google/auth"
 import { listImages, type DriveFile } from "@/lib/google/drive"
@@ -375,7 +376,7 @@ function buildCatalog(products: Product[], isDemo: boolean): Catalog {
  * Si Google no está configurado o falla completamente,
  * se mantienen los productos de demostración como respaldo.
  */
-export async function getProducts(): Promise<Catalog> {
+async function getProductsUncached(): Promise<Catalog> {
   const env = getGoogleEnv()
 
   if (!env) {
@@ -423,7 +424,14 @@ export async function getProducts(): Promise<Catalog> {
     return buildCatalog(fallbackProducts, true)
   }
 }
-
+export const getProducts = unstable_cache(
+  getProductsUncached,
+  ["glamm-moda-catalog-v1"],
+  {
+    revalidate: 300,
+    tags: ["glamm-moda-catalog"],
+  },
+)
 export async function getProductBySlug(slug: string) {
   const catalog = await getProducts()
 

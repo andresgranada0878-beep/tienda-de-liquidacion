@@ -71,7 +71,7 @@ export default async function CatalogPage({
           className="mt-8 flex gap-2 overflow-x-auto pb-2"
           aria-label="Filtrar productos por categoría"
         >
-          <Link
+          <Link prefetch={false}
             href="/catalogo"
             className={cn(
               "shrink-0 border px-4 py-2 text-sm transition-colors",
@@ -87,7 +87,7 @@ export default async function CatalogPage({
             const active = category.name === selectedCategory
 
             return (
-              <Link
+              <Link prefetch={false}
                 key={category.name}
                 href={`/catalogo?categoria=${encodeURIComponent(
                   category.name,
@@ -123,7 +123,7 @@ export default async function CatalogPage({
           </div>
 
           {selectedCategory ? (
-            <Link
+            <Link prefetch={false}
               href="/catalogo"
               className="text-sm underline underline-offset-4"
             >
@@ -138,7 +138,7 @@ export default async function CatalogPage({
               <ProductCard
                 key={product.slug}
                 product={product}
-                priority={index < 4}
+                priority={index < 2}
               />
             ))}
           </div>
@@ -152,7 +152,7 @@ export default async function CatalogPage({
               Esta categoría no tiene inventario disponible actualmente.
             </p>
 
-            <Link
+            <Link prefetch={false}
               href="/catalogo"
               className="mt-5 inline-block border border-foreground px-5 py-3 text-sm"
             >
@@ -164,3 +164,6 @@ export default async function CatalogPage({
     </>
   )
 }
+
+
+

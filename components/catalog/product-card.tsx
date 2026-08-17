@@ -52,8 +52,8 @@ export function ProductCard({ product, priority = false }: { product: Product; p
             alt={product.images[0]?.alt || product.name}
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-            preload={priority}
-            loading={priority ? undefined : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
+            loading={priority ? "eager" : "lazy"}
             className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
         </Link>
@@ -65,7 +65,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
             </span>
           ) : isLastUnit(product) ? (
             <span className="bg-sale px-2 py-1 text-[0.65rem] font-medium uppercase tracking-wider text-sale-foreground">
-              Última unidad
+              Ãšltima unidad
             </span>
           ) : null}
           {discount && !soldOut ? (
@@ -112,7 +112,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
         </div>
 
         <p className="text-xs text-muted-foreground">
-          {product.color ? `${product.color} · ` : ""}
+          {product.color ? `${product.color} Â· ` : ""}
           {soldOut
             ? "Sin unidades"
             : `${product.stock} ${product.stock === 1 ? "unidad" : "unidades"}`}
@@ -163,7 +163,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
                   ? "Agregada"
                   : !size
                     ? "Elige talla"
-                    : "Agregar a mi selección"}
+                    : "Agregar a mi selecciÃ³n"}
             </Button>
             <Link prefetch={false}
               href={`/producto/${product.slug}`}

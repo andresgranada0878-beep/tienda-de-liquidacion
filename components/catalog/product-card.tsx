@@ -148,7 +148,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
           <div className="flex flex-col gap-2 sm:flex-row">
             <Button
               size="sm"
-              className="h-10 w-full rounded-none text-sm"
+              className="h-10 w-full rounded-none text-xs"
               disabled={soldOut || !size}
               onClick={handleAdd}
             >
@@ -180,6 +180,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
     </article>
   )
 }
+
 
 
 

@@ -1,4 +1,4 @@
-import Image from "next/image"
+﻿import Image from "next/image"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
@@ -106,7 +106,7 @@ export function Hero({ products, categories }: HeroProps) {
 
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
 
-                  <div className="absolute inset-x-0 bottom-0 px-3 pb-3 pt-10 text-white">
+                  <div className="absolute inset-x-0 bottom-0 px-3 pb-3 pt-10 text-white break-words">
                     <p className="font-medium">{collection.name}</p>
                     <p className="mt-1 text-xs text-white/80">
                       {collection.count}{" "}
@@ -133,3 +133,8 @@ export function Hero({ products, categories }: HeroProps) {
     </section>
   )
 }
+
+
+
+
+

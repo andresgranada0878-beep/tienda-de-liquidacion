@@ -1,4 +1,4 @@
-import Link from "next/link"
+﻿import Link from "next/link"
 
 import { ProductCard } from "@/components/catalog/product-card"
 import { Button } from "@/components/ui/button"
@@ -30,7 +30,7 @@ export function FeaturedProducts({ products }: { products: Product[] }) {
           variant="outline"
           size="lg"
           className="h-11 rounded-none"
-          render={<Link href="/catalogo" />}
+          render={<Link href="/catálogo" />}
         >
           Ver todo el catálogo
         </Button>
@@ -48,3 +48,4 @@ export function FeaturedProducts({ products }: { products: Product[] }) {
     </section>
   )
 }
+

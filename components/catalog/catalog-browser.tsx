@@ -145,7 +145,7 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
       </div>
 
       {visibleProducts.length > 0 ? (
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
           {visibleProducts.map((product, index) => (
             <ProductCard
               key={product.slug}
@@ -179,6 +179,7 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
 
 
 // responsive deploy refresh
+
 
 
 

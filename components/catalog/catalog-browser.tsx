@@ -19,7 +19,7 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
       const requestedCategory = params.get("categoria") ?? ""
 
       const categoryExists = catalog.categories.some(
-        (category) => categoryName === requestedCategory,
+        (category) => category.name === requestedCategory,
       )
 
       setSelectedCategory(
@@ -179,6 +179,7 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
 
 
 // responsive deploy refresh
+
 
 
 

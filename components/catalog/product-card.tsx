@@ -87,13 +87,13 @@ export function ProductCard({ product, priority = false }: { product: Product; p
 
       <div className="flex flex-1 flex-col gap-2 p-2 sm:p-3">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">
+          <span className="text-[0.65rem] uppercase tracking-wider text-muted-foreground break-words">
             {product.category}
           </span>
           <span className="text-[0.65rem] text-muted-foreground">{product.code}</span>
         </div>
 
-        <h3 className="font-serif text-sm leading-snug text-pretty break-words line-clamp-2">
+        <h3 className="font-serif text-sm leading-snug break-words">
           <Link prefetch={false} href={`/producto/${product.slug}`} className="hover:underline">
             {product.name}
           </Link>
@@ -145,7 +145,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
             <p className="text-xs text-muted-foreground">Talla {product.sizes[0]}</p>
           ) : null}
 
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <Button
               size="sm"
               className="h-9 flex-1 rounded-none text-xs"
@@ -180,6 +180,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
     </article>
   )
 }
+
 
 
 

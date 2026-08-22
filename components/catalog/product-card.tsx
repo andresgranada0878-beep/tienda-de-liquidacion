@@ -85,7 +85,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-3">
+      <div className="flex flex-1 flex-col gap-2 p-2 sm:p-3">
         <div className="flex items-center justify-between gap-2">
           <span className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">
             {product.category}
@@ -148,7 +148,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
           <div className="flex gap-2">
             <Button
               size="sm"
-              className="h-9 flex-1 rounded-none"
+              className="h-9 flex-1 rounded-none text-xs"
               disabled={soldOut || !size}
               onClick={handleAdd}
             >
@@ -180,6 +180,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
     </article>
   )
 }
+
 
 
 

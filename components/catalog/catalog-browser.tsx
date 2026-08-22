@@ -16,10 +16,10 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
   useEffect(() => {
     function syncFromUrl() {
       const params = new URLSearchParams(window.location.search)
-      const requestedCategory = params.get("categoria") ?? ""
+      const requestedCategory = params.get("categoría") ?? ""
 
       const categoryExists = catalog.categories.some(
-        (category) => category.name === requestedCategory,
+        (category) => categoríame === requestedCategory,
       )
 
       setSelectedCategory(
@@ -36,15 +36,15 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
     }
   }, [catalog.categories])
 
-  function changeCategory(category: string) {
-    setSelectedCategory(category)
+  function changecategoríategory: string) {
+    setSelectedcategoríategory)
 
     const url = new URL(window.location.href)
 
     if (category) {
-      url.searchParams.set("categoria", category)
+      url.searchParams.set("categoría", category)
     } else {
-      url.searchParams.delete("categoria")
+      url.searchParams.delete("categoría")
     }
 
     window.history.pushState({}, "", url)
@@ -68,7 +68,7 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
         </span>
 
         <h1 className="mt-2 font-serif text-4xl tracking-tight md:text-5xl">
-          CatÃ¡logo Glamm Moda
+          Catálogo Glamm Moda
         </h1>
 
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground md:text-base">
@@ -79,7 +79,7 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
 
       <nav
         className="mt-8 flex gap-2 overflow-x-auto pb-2"
-        aria-label="Filtrar productos por categorÃ­a"
+        aria-label="Filtrar productos por categoría"
       >
         <button
           type="button"
@@ -95,13 +95,13 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
         </button>
 
         {catalog.categories.map((category) => {
-          const active = category.name === selectedCategory
+          const active = categoríame === selectedCategory
 
           return (
             <button
-              key={category.name}
+              key={categoríame}
               type="button"
-              onClick={() => changeCategory(category.name)}
+              onClick={() => changecategoríategory.name)}
               className={cn(
                 "shrink-0 border px-4 py-2 text-sm transition-colors",
                 active
@@ -109,7 +109,7 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
                   : "border-border bg-background hover:border-foreground",
               )}
             >
-              {category.name}
+              {categoríame}
 
               <span className="ml-2 text-xs opacity-70">
                 {category.count}
@@ -161,7 +161,7 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
           </h2>
 
           <p className="mt-2 text-sm text-muted-foreground">
-            Esta categorÃ­a no tiene inventario disponible actualmente.
+            Esta categoría no tiene inventario disponible actualmente.
           </p>
 
           <button
@@ -179,3 +179,4 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
 
 
 // responsive deploy refresh
+

@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useEffect, useState } from "react"
 
@@ -61,14 +61,14 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
     : availableProducts
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-4 py-8 md:px-6 md:py-12">
+    <main className="mx-auto w-full max-w-7xl overflow-x-hidden px-4 py-8 md:px-6 md:py-12">
       <header className="max-w-2xl">
         <span className="text-eyebrow text-muted-foreground">
           Prendas disponibles
         </span>
 
         <h1 className="mt-2 font-serif text-4xl tracking-tight md:text-5xl">
-          Catálogo Glamm Moda
+          CatÃ¡logo Glamm Moda
         </h1>
 
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground md:text-base">
@@ -79,7 +79,7 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
 
       <nav
         className="mt-8 flex gap-2 overflow-x-auto pb-2"
-        aria-label="Filtrar productos por categoría"
+        aria-label="Filtrar productos por categorÃ­a"
       >
         <button
           type="button"
@@ -145,7 +145,7 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
       </div>
 
       {visibleProducts.length > 0 ? (
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
           {visibleProducts.map((product, index) => (
             <ProductCard
               key={product.slug}
@@ -161,7 +161,7 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
           </h2>
 
           <p className="mt-2 text-sm text-muted-foreground">
-            Esta categoría no tiene inventario disponible actualmente.
+            Esta categorÃ­a no tiene inventario disponible actualmente.
           </p>
 
           <button
@@ -176,3 +176,4 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
     </main>
   )
 }
+

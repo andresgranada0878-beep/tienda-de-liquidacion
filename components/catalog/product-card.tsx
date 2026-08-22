@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState } from "react"
 import Image from "next/image"
@@ -45,7 +45,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
         soldOut && "opacity-70",
       )}
     >
-      <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-muted">
         <Link prefetch={false} href={`/producto/${product.slug}`} aria-label={`Ver detalles de ${product.name}`}>
           <Image
             src={product.images[0]?.url || "/placeholder.svg"}
@@ -54,7 +54,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
             fetchPriority={priority ? "high" : "auto"}
             loading={priority ? "eager" : "lazy"}
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
         </Link>
 
@@ -65,7 +65,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
             </span>
           ) : isLastUnit(product) ? (
             <span className="bg-sale px-2 py-1 text-[0.65rem] font-medium uppercase tracking-wider text-sale-foreground">
-              Ãšltima unidad
+              Última unidad
             </span>
           ) : null}
           {discount && !soldOut ? (
@@ -93,14 +93,14 @@ export function ProductCard({ product, priority = false }: { product: Product; p
           <span className="text-[0.65rem] text-muted-foreground">{product.code}</span>
         </div>
 
-        <h3 className="font-serif text-base leading-snug text-pretty">
+        <h3 className="font-serif text-sm leading-snug text-pretty break-words line-clamp-2">
           <Link prefetch={false} href={`/producto/${product.slug}`} className="hover:underline">
             {product.name}
           </Link>
         </h3>
 
         <div className="flex flex-wrap items-baseline gap-x-2">
-          <span className="text-lg font-medium tabular-nums">{formatCOP(product.price)}</span>
+          <span className="text-base font-medium tabular-nums whitespace-nowrap">{formatCOP(product.price)}</span>
           {product.previousPrice ? (
             <span className="text-sm text-muted-foreground line-through tabular-nums">
               {formatCOP(product.previousPrice)}
@@ -112,7 +112,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
         </div>
 
         <p className="text-xs text-muted-foreground">
-          {product.color ? `${product.color} Â· ` : ""}
+          {product.color ? `${product.color} · ` : ""}
           {soldOut
             ? "Sin unidades"
             : `${product.stock} ${product.stock === 1 ? "unidad" : "unidades"}`}
@@ -163,7 +163,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
                   ? "Agregada"
                   : !size
                     ? "Elige talla"
-                    : "Agregar a mi selecciÃ³n"}
+                    : "Agregar a mi selección"}
             </Button>
             <Link prefetch={false}
               href={`/producto/${product.slug}`}
@@ -180,6 +180,12 @@ export function ProductCard({ product, priority = false }: { product: Product; p
     </article>
   )
 }
+
+
+
+
+
+
 
 
 

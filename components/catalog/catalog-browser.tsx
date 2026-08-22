@@ -16,10 +16,10 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
   useEffect(() => {
     function syncFromUrl() {
       const params = new URLSearchParams(window.location.search)
-      const requestedCategory = params.get("categoría") ?? ""
+      const requestedCategory = params.get("categoria") ?? ""
 
       const categoryExists = catalog.categories.some(
-        (category) => categoríame === requestedCategory,
+        (category) => categoryName === requestedCategory,
       )
 
       setSelectedCategory(
@@ -36,15 +36,15 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
     }
   }, [catalog.categories])
 
-  function changecategoríategory: string) {
-    setSelectedcategoríategory)
+  function changeCategory(category: string) {
+    setSelectedCategory(category)
 
     const url = new URL(window.location.href)
 
     if (category) {
-      url.searchParams.set("categoría", category)
+      url.searchParams.set("categoria", category)
     } else {
-      url.searchParams.delete("categoría")
+      url.searchParams.delete("categoria")
     }
 
     window.history.pushState({}, "", url)
@@ -95,13 +95,13 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
         </button>
 
         {catalog.categories.map((category) => {
-          const active = categoríame === selectedCategory
+          const active = category.name === selectedCategory
 
           return (
             <button
-              key={categoríame}
+              key={category.name}
               type="button"
-              onClick={() => changecategoríategory.name)}
+              onClick={() => changeCategory(category.name)}
               className={cn(
                 "shrink-0 border px-4 py-2 text-sm transition-colors",
                 active
@@ -109,7 +109,7 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
                   : "border-border bg-background hover:border-foreground",
               )}
             >
-              {categoríame}
+              {category.name}
 
               <span className="ml-2 text-xs opacity-70">
                 {category.count}
@@ -179,4 +179,8 @@ export function CatalogBrowser({ catalog }: CatalogBrowserProps) {
 
 
 // responsive deploy refresh
+
+
+
+
 

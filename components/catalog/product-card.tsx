@@ -51,6 +51,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
             src={product.images[0]?.url || "/placeholder.svg"}
             alt={product.images[0]?.alt || product.name}
             fill
+            unoptimized={product.images[0]?.url.startsWith("/api/catalog/images/")}
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
             fetchPriority={priority ? "high" : "auto"}
             loading={priority ? "eager" : "lazy"}

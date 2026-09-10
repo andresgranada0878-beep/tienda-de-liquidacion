@@ -93,6 +93,7 @@ export function ProductDetail({ product }: { product: Product }) {
                 product.name
               }
               fill
+              unoptimized={product.images[selectedImage]?.url.startsWith("/api/catalog/images/")}
               priority
               sizes="(max-width: 768px) 100vw, 55vw"
               className="object-cover"
@@ -117,6 +118,7 @@ export function ProductDetail({ product }: { product: Product }) {
                     src={image.url}
                     alt={image.alt}
                     fill
+                    unoptimized={image.url.startsWith("/api/catalog/images/")}
                     sizes="120px"
                     className="object-cover"
                   />

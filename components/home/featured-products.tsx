@@ -41,7 +41,7 @@ export function FeaturedProducts({ products }: { products: Product[] }) {
           <ProductCard
             key={product.slug}
             product={product}
-            priority={index < 4}
+            priority={index === 0}
           />
         ))}
       </div>

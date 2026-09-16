@@ -100,7 +100,7 @@ export function Hero({ products, categories }: HeroProps) {
                     }
                     fill
                     unoptimized={collection.product?.images[0]?.url.startsWith("/api/catalog/images/")}
-                    priority={index < 2}
+                    priority={index === 0}
                     sizes="(max-width: 768px) 50vw, 28vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                   />
